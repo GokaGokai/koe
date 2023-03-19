@@ -5,21 +5,20 @@
 <br>
 
 <!-- GETTING STARTED -->
-## About
-Koe is a text-to-speech that listens and reads your the clipboard everytime you press *ctrl+c* (Togglable)
+##  
+Koe is a text-to-speech that listens and reads your the clipboard everytime you press *ctrl+c* (Togglable)   
+Currently for English, French and Japanese  
+  
 
-Currently for English, French and Japanese
-
-
-#### Shortcut
-Speak:        *ctrl+c*
-ToggleListen: *ctrl+shift+x*
-TogglePause:  *ctrl+alt*
-
-## Usage 
-1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases/tag/v4.0.0">latest release</a>
-2- Open *koe.exe*
-3- Select the matching language voices that's available from your system
+#### Shortcut  
+Speak:        *ctrl+c*  
+ToggleListen: *ctrl+shift+x*  
+TogglePause:  *ctrl+alt*  
+  
+### Usage 
+1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases/tag/v4.0.0">latest release</a>  
+2- Open *koe.exe*  
+3- Select the matching language voices that's available from your system  
 ```
 pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
 Hello from the pygame community. https://www.pygame.org/contribute.html
@@ -43,7 +42,7 @@ What to choose for EN? [0-3] 1
 What to choose for FR? [0-3] 2
 What to choose for JP? [0-3] 3
 ```
-4- Select the speed rates
+4- Select the speed rates  
 ```
 ------
 
@@ -52,7 +51,7 @@ Speed Rate for EN? [1-500] 500
 Speed Rate for FR? [1-500] 500
 Speed Rate for JP? [1-500] 200
 ```
-5- Leave it in the background
+5- Leave it in the background  
 ```
 ------------------------------------------------
     koe
@@ -70,7 +69,5 @@ TogglePause:  ctrl+alt
 --Listening
 ```
 <br>   
-Done!
-
-
+Done!  
 
