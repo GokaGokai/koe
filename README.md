@@ -17,14 +17,14 @@ For example, if you select to force Japanese, it will always speak and translate
 
 #### Shortcut  
 Speak:               *ctrl+c*  
-SelectForceLang:     *ctrl+shift+alt+x*
+SelectForceLang:     *ctrl+shift+alt+x*  
 ToggleListen:        *ctrl+shift+x*  
 TogglePause:         *ctrl+alt*  
   
 <br>
 
 ### Usage 
-1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases/tag/v4.0.0">latest release</a>  
+1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases">latest release</a>  
 2- Open *koe.exe*  
 3- Select the matching language voices that are available from your system 
 ```
