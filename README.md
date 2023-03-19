@@ -5,7 +5,7 @@
 <br>
 
 Koe is a text-to-speech that listens and reads your clipboard everytime you press *ctrl+c* (Togglable)   
-Currently for English, French, and Japanese (Autodetects)  '
+Currently for English, French, and Japanese (Autodetects)
 
 ##  
 
