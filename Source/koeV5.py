@@ -6,6 +6,7 @@ import win32clipboard
 import keyboard
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
+from translate import Translator
 
 # by GokaGokai/ JohnTitorTitor/ Kanon
 
@@ -21,6 +22,10 @@ jpIndex = 0
 enRate = 100
 frRate = 100
 jpRate = 100
+langs = ["","en", "fr", "ja"]
+tempDetect = ""
+indexLangs = 0
+forceTranslate = False
 
 def languageSetup(text):
     lang = detect(text)
@@ -28,21 +33,33 @@ def languageSetup(text):
     voices = engine.getProperty('voices')
     # for voice in voices:
     #     print(voice.id)
-    if lang == "ja" or lang == "zh-cn" or lang == "ko":
-        engine.setProperty('voice', voices[jpIndex].id)
-        engine.setProperty('rate', jpRate)
-                
-    elif lang == "fr":
-        engine.setProperty('voice', voices[frIndex].id)
-        engine.setProperty('rate', frRate)
-                
-    else:
+    if langs[indexLangs] == "":
+        if lang == "ja" or lang == "zh-cn" or lang == "ko":
+            engine.setProperty('voice', voices[jpIndex].id)
+            engine.setProperty('rate', jpRate)
+                    
+        elif lang == "fr":
+            engine.setProperty('voice', voices[frIndex].id)
+            engine.setProperty('rate', frRate)
+                    
+        else:
+            engine.setProperty('voice', voices[enIndex].id)
+            engine.setProperty('rate', enRate)
+    elif langs[indexLangs] == "en":
         engine.setProperty('voice', voices[enIndex].id)
         engine.setProperty('rate', enRate)
+    elif langs[indexLangs] == "fr":
+        engine.setProperty('voice', voices[frIndex].id)
+        engine.setProperty('rate', frRate)
+    elif langs[indexLangs] == "ja":
+        engine.setProperty('voice', voices[jpIndex].id)
+        engine.setProperty('rate', jpRate)
                 
 
 def start(text):
     languageSetup(text)
+    if "MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. NEXT AVAILABLE IN " in text:
+        print(text)
     outfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp.wav')
     engine.save_to_file(text, outfile)
     engine.runAndWait()
@@ -55,6 +72,20 @@ def start(text):
     started = True
     paused = False
 
+
+def translate(text):
+    if tempDetect == "ja" or tempDetect == "zh-cn" or tempDetect == "ko":
+        translator = Translator(langs[indexLangs], from_lang="ja")
+    elif tempDetect == "fr":
+        translator = Translator(langs[indexLangs], from_lang="fr")
+    elif tempDetect == "en":
+        translator = Translator(langs[indexLangs], from_lang="en")
+    else:
+        translator = Translator(langs[indexLangs])
+
+    translation = translator.translate(text)
+    return translation
+
 def action():
         if listening:
             time.sleep(0.05)
@@ -66,14 +97,19 @@ def action():
             win32clipboard.CloseClipboard()
             stop()
             try:
-                detect(data)
-                start(data)
+                global tempDetect
+                tempDetect = detect(data)
+                if langs[indexLangs] != "":
+                    start(translate(data))
+                else:
+                    start(data)
             except LangDetectException:
                 # return a default language code or None if language cannot be detected
                 return None
             
 
 keyboard.add_hotkey("ctrl+c", lambda: action())
+keyboard.add_hotkey("ctrl+shift+alt+x", lambda: selectForceLang())
 keyboard.add_hotkey("ctrl+shift+x", lambda: toggleListen())
 keyboard.add_hotkey("ctrl+alt", lambda: togglePause())
 
@@ -84,12 +120,17 @@ def stop():
 def toggleListen():
     global listening
 
+    if langs[indexLangs] == "":
+        additional = ""
+    else:
+        additional = "and Speaking in "
+
     if listening:
         listening= False
-        print(f"--Ignoring                                                                          ", end="\r")
+        print(f"Ignoring                                                                           ", end="\r")
     elif not listening:
         listening = True
-        print(f"--Listening                                                                           ", end="\r")
+        print(f"Listening " + additional + langs[indexLangs] + "                                                                           ", end="\r")
 
 def togglePause():
     global paused
@@ -135,11 +176,24 @@ def rateSelect():
     jpRate = int(input("Speed Rate for JP? [1-500] "))
     print("\nGotcha!\n")
 
+def selectForceLang():
+    global indexLangs
+    indexLangs += 1
+    if indexLangs == len(langs):
+        indexLangs = 0
+
+    if langs[indexLangs] == "":
+        additional = ""
+    else:
+        additional = "and Speaking in "
+
+    print(f"Listening " + additional + langs[indexLangs] + "                                                                           ", end="\r")
+
 
 print("")
 print("------------------------------------------------")
 print("    koe")
-print("    v4")
+print("    v5")
 print("  by GokaGokai/ JohnTitorTitor/ Kanon")
 print("------------------------------------------------")
 print("\nAfter selecting voices and speed rates, leave it in the background\n")
@@ -148,16 +202,18 @@ rateSelect()
 print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 print("------------------------------------------------")
 print("    koe")
-print("    v4")
+print("    v5")
 print("  by GokaGokai/ JohnTitorTitor/ Kanon")
 print("------------------------------------------------")
 print("\nLeave it in the background\n")
-print("Speak:        ctrl+c")
-print("toggleListen: ctrl+shift+x")
-print("TogglePause:  ctrl+alt")
-print("\n-Status-")
+print("Speak:               ctrl+c")
+print("SelectForceLang:     ctrl+shift+alt+x")
+print("ToggleListen:        ctrl+shift+x")
+print("TogglePause:         ctrl+alt")
+print("")
+print("---Status---")
 toggleListen()
-input("")
+keyboard.wait()
 
 # keyboard.add_hotkey("ctrl+c", lambda: action())
 # keyboard.add_hotkey("ctrl+shift+x", lambda: toggleListen())

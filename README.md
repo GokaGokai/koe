@@ -4,15 +4,22 @@
 
 <br>
 
-Koe is a text-to-speech that listens and reads your clipboard everytime you press *ctrl+c* (Togglable)   
-Currently for English, French, and Japanese (Autodetects)
+Koe is a text-to-speech that listens and reads your clipboard every time you press *ctrl+c* (Togglable)   
+Currently for English, French, and Japanese.    
 
+You can choose to autodetect the language from the clipboard,  
+it will speak the corresponding language.
+
+You can also force it to always speak one language.    
+For example, if you select to force Japanese, it will always speak and translate to you in Japanese even if you copy an English or French text or other.  
+  
 ##  
 
 #### Shortcut  
-Speak:        *ctrl+c*  
-ToggleListen: *ctrl+shift+x*  
-TogglePause:  *ctrl+alt*  
+Speak:               *ctrl+c*  
+SelectForceLang:     *ctrl+shift+alt+x*
+ToggleListen:        *ctrl+shift+x*  
+TogglePause:         *ctrl+alt*  
   
 <br>
 
@@ -26,7 +33,7 @@ Hello from the pygame community. https://www.pygame.org/contribute.html
 
 ------------------------------------------------
     koe
-    v4
+    v5
   by GokaGokai/ JohnTitorTitor/ Kanon
 ------------------------------------------------
 
@@ -56,18 +63,19 @@ Speed Rate for JP? [1-500] 200
 ```
 ------------------------------------------------
     koe
-    v4
+    v5
   by GokaGokai/ JohnTitorTitor/ Kanon
 ------------------------------------------------
 
 Leave it in the background
 
-Speak:        ctrl+c
-toggleListen: ctrl+shift+x
-TogglePause:  ctrl+alt
+Speak:               ctrl+c
+SelectForceLang:     ctrl+shift+alt+x
+ToggleListen:        ctrl+shift+x
+TogglePause:         ctrl+alt
 
--Status-
---Listening
+---Status---
+Listening
 ```
 <br>   
 Done!  
