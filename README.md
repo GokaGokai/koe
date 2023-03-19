@@ -4,21 +4,22 @@
 
 <br>
 
-<!-- GETTING STARTED -->
+Koe is a text-to-speech that listens and reads your clipboard everytime you press *ctrl+c* (Togglable)   
+Currently for English, French, and Japanese (Autodetects)  '
+
 ##  
-Koe is a text-to-speech that listens and reads your the clipboard everytime you press *ctrl+c* (Togglable)   
-Currently for English, French and Japanese  
-  
 
 #### Shortcut  
 Speak:        *ctrl+c*  
 ToggleListen: *ctrl+shift+x*  
 TogglePause:  *ctrl+alt*  
   
+<br>
+
 ### Usage 
 1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases/tag/v4.0.0">latest release</a>  
 2- Open *koe.exe*  
-3- Select the matching language voices that's available from your system  
+3- Select the matching language voices that are available from your system 
 ```
 pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
 Hello from the pygame community. https://www.pygame.org/contribute.html
