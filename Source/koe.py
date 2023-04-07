@@ -3,7 +3,6 @@
 # Description: Text-to-speech listener (Windows) v6.1
 import json
 import os
-import sys
 import time
 from pygame import mixer
 import pyttsx3
@@ -13,7 +12,7 @@ import queue
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from translate import Translator
-os.system("title 声")
+os.system('start cmd /c mode con: cols=56 lines=18 && mode con: cols=56 lines=18 && title 声')
 langs = ["","en", "fr", "ja"]   # "" is autodetect
 ver = "v6.1"
 
@@ -46,7 +45,8 @@ def speak(text):
         mixer.music.load(outfile)
         mixer.music.play()
     except Exception as e:
-        print("Error", e)
+        # print("Error", e)
+        return
 
 def voiceSetup():
     voices = engine.getProperty('voices')
@@ -87,7 +87,7 @@ def translate(text):
 
         return translation
     except Exception as e:
-        print("Error translating text:", e)
+        # print("Error translating text:", e)
         return text
     
 def stop():
@@ -117,7 +117,7 @@ def action():
                 data = win32clipboard.GetClipboardData()
                 win32clipboard.CloseClipboard()
             except Exception as e:
-                print("Error accessing clipboard:", e)
+                # print("Error accessing clipboard:", e)
                 return
             
             stop()
@@ -137,7 +137,6 @@ def action():
                     speak(data)
                 
             except LangDetectException:
-                # return a default language code or None if language cannot be detected
                 return None
 
 def selectForceLang():
@@ -180,7 +179,7 @@ def toggleListen():
         speak("Listening")
         print(f"{'Listening ' + additional + langs[selectedLang]:<{os.get_terminal_size().columns}}", end="\r")
 
-def togglePause():
+def interrupt():
     global paused
     global started
 
@@ -192,10 +191,10 @@ def togglePause():
         paused = True
 
 keyboard.add_hotkey("ctrl+c", lambda: task_queue.put("action"))
-keyboard.add_hotkey("ctrl+shift+alt+x", lambda: task_queue.put("selectForceLang"))
+keyboard.add_hotkey("ctrl+alt", lambda: task_queue.put("interrupt"))
 keyboard.add_hotkey("ctrl+shift+x", lambda: task_queue.put("toggleListen"))
-keyboard.add_hotkey("ctrl+alt", lambda: task_queue.put("togglePause"))
-keyboard.add_hotkey("ctrl+alt+p", lambda: task_queue.put("changeVoicesSpeeds"))
+keyboard.add_hotkey("ctrl+shift+alt+x", lambda: task_queue.put("selectForceLang"))
+keyboard.add_hotkey("ctrl+alt+p", lambda: task_queue.put("selectVoicesSpeeds"))
 
 
 # ------------------------
@@ -242,7 +241,7 @@ def load_config():
         config = {"EN": None, "FR": None, "JP": None, "EN_rate": None, "FR_rate": None, "JP_rate": None}
     return config
     
-def changeVoicesSpeeds():
+def selectVoicesSpeeds():
     print("\n" * 30)
     print("------------------------------------------------")
     print("    koe")
@@ -363,10 +362,10 @@ def printMenu():
     print("------------------------------------------------")
     print("\nLeave it in the background\n")
     print("Speak:               ctrl+c")
-    print("SelectForceLang:     ctrl+shift+alt+x")
+    print("Interrupt:           ctrl+alt")
     print("ToggleListen:        ctrl+shift+x")
-    print("TogglePause:         ctrl+alt")
-    print("ChangeVoicesSpeeds:  ctrl+alt+p")
+    print("SelectForceLang:     ctrl+shift+alt+x")
+    print("SelectVoicesSpeeds:  ctrl+alt+p")
     print("\n")
     print("---Status---")
 
@@ -381,14 +380,14 @@ try:
         task = task_queue.get()
         if task == "action":
             action()
-        elif task == "selectForceLang":
-            selectForceLang()
+        elif task == "interrupt":
+            interrupt()
         elif task == "toggleListen":
             toggleListen()
-        elif task == "togglePause":
-            togglePause()
-        elif task == "changeVoicesSpeeds":
-            changeVoicesSpeeds()
+        elif task == "selectForceLang":
+            selectForceLang()
+        elif task == "selectVoicesSpeeds":
+            selectVoicesSpeeds()
 
 except KeyboardInterrupt:
     print("\nExiting the program...")

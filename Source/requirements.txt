@@ -1,0 +1,6 @@
+pyttsx3
+pygame
+pywin32
+keyboard
+langdetect
+translate

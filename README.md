@@ -4,26 +4,26 @@
 
 <br>
 
-Koe is an easy and convenient text-to-speech application that listens and reads your clipboard in the background.   
+Koe is an easy and convenient text-to-speech application that listens and reads your clipboard in the background.     
 
 Currently supports English, French, and Japanese.  
   
 ##### Features:
-- Listens and reads directly when pressing *ctrl+c*.  
-- Interrupt with *ctrl+alt*
-- Toggle between listening and ignoring with *ctrl+shift+x*.  
-- Automatically detects the language of the copied text.  
-- Can change the voices and speed rates for each language.  
+- Speech highlighted texts when pressing *ctrl+c*.   
+- Interrupt text-to-speech with *ctrl+alt*   
+- Toggle between listening and ignoring with *ctrl+shift+x*.   
 - Can force the text-to-speech to always use a specific language.   
- 
+(Automatically detects the language of the copied text by default.)    
+- Can change the voices and speed rates for each language.   
    
 ##### Keyboard Shortcuts
 
 - Speak: `ctrl+c`
-- SelectForceLang: `ctrl+shift+alt+x`
+- Interrupt: `ctrl+alt`
 - ToggleListen: `ctrl+shift+x`
-- TogglePause: `ctrl+alt`
-- ChangeVoicesSpeeds: `ctrl+alt+p`
+- SelectForceLang: `ctrl+shift+alt+x`
+- SelectVoicesSpeeds: `ctrl+alt+p`
+
 
 <br>
 
@@ -31,7 +31,7 @@ Currently supports English, French, and Japanese.
 1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases">latest release</a>  
 2- Open *koe.exe*  
 3- Select the matching language voices that are available from your system  
-(You download them with your PC Settings, Language)
+(If missing, download them in your PC Settings, Language)
 ```
 ------------------------------------------------
     koe
@@ -72,14 +72,14 @@ Speed Rate for JP? [1-500] 200
 Leave it in the background
 
 Speak:               ctrl+c
-SelectForceLang:     ctrl+shift+alt+x
+Interrupt:           ctrl+alt
 ToggleListen:        ctrl+shift+x
-TogglePause:         ctrl+alt
-ChangeVoicesSpeeds:  ctrl+alt+p
+SelectForceLang:     ctrl+shift+alt+x
+SelectVoicesSpeeds:  ctrl+alt+p
 
 
 ---Status---
-Listening 
+Listening   
 ```
 
 6- Try highlighting any text and pressing *ctrl+c*.  
