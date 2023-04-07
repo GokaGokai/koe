@@ -4,24 +4,24 @@
 
 <br>
 
-Koe is an easy and convenient text-to-speech application that listens and reads your clipboard in the background.     
+Koe is an **easy and convenient text-to-speech** application that listens and reads your clipboard in the background.     
 
 Currently supports English, French, and Japanese.  
   
 ##### Features:
-- Speak highlighted texts when pressing *ctrl+c*.   
-- Interrupt text-to-speech with *ctrl+alt*   
-- Toggle between listening and ignoring with *ctrl+shift+x*.   
-- Can force text-to-speech to translate to a specific language.       
-- Can change voices and speed rates for each language.   
+- **Speak highlighted texts** when pressing `ctrl+c`.   
+- **Interrupt** text-to-speech with `ctrl+alt`   
+- Toggle between **listening and ignoring** with `ctrl+shift+x`.   
+- Can force text-to-speech to **translate** to a specific language.       
+- Can change **voices and speed rates** for each language.   
    
-##### Keyboard Shortcuts
+##### Shortcuts
 
-- Speak: `ctrl+c`
-- Interrupt: `ctrl+alt`
-- ToggleListen: `ctrl+shift+x`
-- SelectForceLang: `ctrl+shift+alt+x`
-- SelectVoicesSpeeds: `ctrl+alt+p`
+- **Speak**: `ctrl+c`
+- **Interrupt**: `ctrl+alt`
+- **ToggleListen**: `ctrl+shift+x`
+- **SelectForceLang**: `ctrl+shift+alt+x`
+- **SelectVoicesSpeeds**: `ctrl+alt+p`
 
 
 <br>
@@ -84,5 +84,6 @@ Listening
 6- Try highlighting any text and pressing *ctrl+c*.  
 
 <br>   
-Done!  
 
+**Done!**  
+  
