@@ -9,12 +9,11 @@ Koe is an easy and convenient text-to-speech application that listens and reads 
 Currently supports English, French, and Japanese.  
   
 ##### Features:
-- Speech highlighted texts when pressing *ctrl+c*.   
+- Speak highlighted texts when pressing *ctrl+c*.   
 - Interrupt text-to-speech with *ctrl+alt*   
 - Toggle between listening and ignoring with *ctrl+shift+x*.   
-- Can force the text-to-speech to always use a specific language.   
-(Automatically detects the language of the copied text by default.)    
-- Can change the voices and speed rates for each language.   
+- Can force text-to-speech to translate to a specific language.       
+- Can change voices and speed rates for each language.   
    
 ##### Keyboard Shortcuts
 
