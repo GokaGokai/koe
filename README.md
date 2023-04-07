@@ -5,7 +5,6 @@
 <br>
 
 Koe is an **easy and convenient text-to-speech** application that listens and reads your clipboard in the background.     
-
 Currently supports English, French, and Japanese.  
   
 ##### Features:
