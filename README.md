@@ -8,7 +8,7 @@ Koe is an easy and convenient text-to-speech application that listens and reads 
 
 Currently supports English, French, and Japanese.  
   
-#####Features:
+##### Features:
 - Listens and reads directly when pressing *ctrl+c*.  
 - Interrupt with *ctrl+alt*
 - Toggle between listening and ignoring with *ctrl+shift+x*.  

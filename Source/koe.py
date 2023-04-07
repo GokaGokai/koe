@@ -1,18 +1,21 @@
 # Author: GokaGokai (@GokaGokai on GitHub)
-# Date: March 20, 2023
-# Description: Text-to-speech listener (Windows) v5.1
+# Date: 4/7/2023
+# Description: Text-to-speech listener (Windows) v6.1
+import json
 import os
+import sys
 import time
 from pygame import mixer
 import pyttsx3
 import win32clipboard
 import keyboard
+import queue
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from translate import Translator
 os.system("title 声")
 langs = ["","en", "fr", "ja"]   # "" is autodetect
-ver = "v5.1"
+ver = "v6.1"
 
 
 # ------------------
@@ -21,6 +24,7 @@ ver = "v5.1"
 mixer.init()
 engine = pyttsx3.init()
 detectedLang = ""
+task_queue = queue.Queue()
 
 def speak(text):
     global started
@@ -29,7 +33,8 @@ def speak(text):
     paused = False
 
     voiceSetup()
-
+    
+    # Warning for SelectForceLang on limits per day
     if "MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS" in text:
         print(text)
 
@@ -37,7 +42,8 @@ def speak(text):
         outfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp.wav')
         engine.save_to_file(text, outfile)
         engine.runAndWait()
-        mixer.music.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp.wav'))
+
+        mixer.music.load(outfile)
         mixer.music.play()
     except Exception as e:
         print("Error", e)
@@ -102,12 +108,18 @@ def action():
         if listening:
             # Wait for a brief moment to avoid racing conditions with clipboard updates
             time.sleep(DELAY)
-            win32clipboard.OpenClipboard()
-            if not win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_UNICODETEXT):
+
+            try:
+                win32clipboard.OpenClipboard()
+                if not win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_UNICODETEXT):
+                    win32clipboard.CloseClipboard()
+                    return
+                data = win32clipboard.GetClipboardData()
                 win32clipboard.CloseClipboard()
+            except Exception as e:
+                print("Error accessing clipboard:", e)
                 return
-            data = win32clipboard.GetClipboardData()
-            win32clipboard.CloseClipboard()
+            
             stop()
 
             try:
@@ -123,7 +135,7 @@ def action():
                     win32clipboard.CloseClipboard()
                 else:
                     speak(data)
-
+                
             except LangDetectException:
                 # return a default language code or None if language cannot be detected
                 return None
@@ -139,7 +151,17 @@ def selectForceLang():
     else:
         additional = "and Speaking in "
 
-    print(f"Listening " + additional + langs[selectedLang] + "                                                                           ", end="\r")
+    stop()
+    if langs[selectedLang] == "":
+        speak("Auto")
+    elif langs[selectedLang] == "en":
+        speak("English")
+    elif langs[selectedLang] == "fr":
+        speak("Francais")
+    elif langs[selectedLang] == "ja":
+        speak("にほんご")
+
+    print(f"{'Listening ' + additional + langs[selectedLang]:<{os.get_terminal_size().columns}}", end="\r")
 
 def toggleListen():
     global listening
@@ -148,12 +170,15 @@ def toggleListen():
     else:
         additional = "and Speaking in "
 
+    stop()
     if listening:
         listening= False
-        print(f"Ignoring                                                                           ", end="\r")
+        speak("Ignoring")
+        print(f"{'Ignoring':<{os.get_terminal_size().columns}}", end="\r")
     elif not listening:
         listening = True
-        print(f"Listening " + additional + langs[selectedLang] + "                                                                           ", end="\r")
+        speak("Listening")
+        print(f"{'Listening ' + additional + langs[selectedLang]:<{os.get_terminal_size().columns}}", end="\r")
 
 def togglePause():
     global paused
@@ -166,10 +191,85 @@ def togglePause():
         mixer.music.pause()
         paused = True
 
-keyboard.add_hotkey("ctrl+c", lambda: action())
-keyboard.add_hotkey("ctrl+shift+alt+x", lambda: selectForceLang())
-keyboard.add_hotkey("ctrl+shift+x", lambda: toggleListen())
-keyboard.add_hotkey("ctrl+alt", lambda: togglePause())
+keyboard.add_hotkey("ctrl+c", lambda: task_queue.put("action"))
+keyboard.add_hotkey("ctrl+shift+alt+x", lambda: task_queue.put("selectForceLang"))
+keyboard.add_hotkey("ctrl+shift+x", lambda: task_queue.put("toggleListen"))
+keyboard.add_hotkey("ctrl+alt", lambda: task_queue.put("togglePause"))
+keyboard.add_hotkey("ctrl+alt+p", lambda: task_queue.put("changeVoicesSpeeds"))
+
+
+# ------------------------
+# Saves and load config
+# ------------------------
+config_file = "config.json"
+
+def get_config_path():
+    app_name = "Koe"
+    local_app_data = os.environ.get("LOCALAPPDATA")
+    config_folder = os.path.join(local_app_data, app_name)
+    if not os.path.exists(config_folder):
+        os.makedirs(config_folder)
+    config_path = os.path.join(config_folder, "config.json")
+    return config_path
+
+def save_config(enIndex, frIndex, jpIndex, enRate, frRate, jpRate):
+    config_path = get_config_path()
+    config = {
+        "enIndex": enIndex,
+        "frIndex": frIndex,
+        "jpIndex": jpIndex,
+        "enRate": enRate,
+        "frRate": frRate,
+        "jpRate": jpRate
+    }
+    with open(config_path, "w") as f:
+        json.dump(config, f)
+        
+def reset_config():
+    config = {}
+
+    config_path = get_config_path()
+
+    with open(config_path, "w") as f:
+        json.dump(config, f)
+
+def load_config():
+    config_path = get_config_path()
+    if os.path.exists(config_path):
+        with open(config_path, "r") as f:
+            config = json.load(f)
+    else:
+        config = {"EN": None, "FR": None, "JP": None, "EN_rate": None, "FR_rate": None, "JP_rate": None}
+    return config
+    
+def changeVoicesSpeeds():
+    print("\n" * 30)
+    print("------------------------------------------------")
+    print("    koe")
+    print("    " + ver)
+    print("  by GokaGokai")
+    print("------------------------------------------------")
+    print("\nAfter selecting voices and speed rates, leave it in the background\n")
+
+    reset_config()
+    printSelectVoices()
+    printSelectRate()
+    save_config(enIndex, frIndex, jpIndex, enRate, frRate, jpRate)
+
+    if langs[selectedLang] == "":
+        additional = ""
+    else:
+        additional = "and Speaking in "
+
+    printMenu()
+
+    stop()
+    if not listening:
+        speak("Ignoring")
+        print(f"{'Ignoring':<{os.get_terminal_size().columns}}", end="\r")
+    elif listening:
+        speak("Listening")
+        print(f"{'Listening ' + additional + langs[selectedLang]:<{os.get_terminal_size().columns}}", end="\r")
 
 
 # ------
@@ -182,62 +282,113 @@ enRate = 100
 frRate = 100
 jpRate = 100
 
+def get_integer_input(prompt, min_value, max_value):
+    while True:
+        try:
+            value = int(input(prompt))
+            if min_value <= value <= max_value:
+                return value
+            else:
+                print(f"Please enter a value between {min_value} and {max_value}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+
 def printSelectVoices():
     global enIndex
     global frIndex
     global jpIndex
-    voices = engine.getProperty('voices')
-    i = 0
 
-    print("------")
-    for voice in voices:
-        print(str(i) + " - " + voice.id)
-        i += 1
+    config = load_config()
+    if config is not None and "enIndex" in config and "frIndex" in config and "jpIndex" in config:
+        enIndex = config["enIndex"]
+        frIndex = config["frIndex"]
+        jpIndex = config["jpIndex"]
+        print("Using voice indices from config file.")
+    else:
+        voices = engine.getProperty('voices')
+        i = 0
 
-    print("\nIf you don't see the language, just type 0 for now")
-    enIndex = int(input("What to choose for EN? [0-" + str(i-1) + "] "))
-    frIndex = int(input("What to choose for FR? [0-" + str(i-1) + "] "))
-    jpIndex = int(input("What to choose for JP? [0-" + str(i-1) + "] "))
-    print("\nGotcha!\n")
+        print("------")
+        for voice in voices:
+            elements = voice.id.split("\\")
+            last_element = elements[-1]
+            print(str(i) + " - " + last_element)
+            i += 1
+
+        print("\nIf you don't see the language, just type 0 for now")
+        enIndex = get_integer_input("What to choose for EN? [0-" + str(i-1) + "] ", 0, i-1)
+        frIndex = get_integer_input("What to choose for FR? [0-" + str(i-1) + "] ", 0, i-1)
+        jpIndex = get_integer_input("What to choose for JP? [0-" + str(i-1) + "] ", 0, i-1)
+        print("\nGotcha!\n\n")
 
 def printSelectRate():
     global enRate
     global frRate
     global jpRate
 
-    print("------")
-    print("\nFor reference, the normal Speed is 100")
-    enRate = int(input("Speed Rate for EN? [1-500] "))
-    frRate = int(input("Speed Rate for FR? [1-500] "))
-    jpRate = int(input("Speed Rate for JP? [1-500] "))
-    print("\nGotcha!\n")
+    config = load_config()
+    if config is not None and "enRate" in config and "frRate" in config and "jpRate" in config:
+        enRate = config["enRate"]
+        frRate = config["frRate"]
+        jpRate = config["jpRate"]
+        print("Using speed rates from config file.")
+    else:
+        print("------")
+        print("\nFor reference, the normal Speed is 100")
+        enRate = get_integer_input("Speed Rate for EN? [1-500] ", 1, 500)
+        frRate = get_integer_input("Speed Rate for FR? [1-500] ", 1, 500)
+        jpRate = get_integer_input("Speed Rate for JP? [1-500] ", 1, 500)
+        
+        print("\nGotcha!\n\n")
 
-def printMenu():
-    print("")
+def printPrompt():
+    print("\n" * 30)
     print("------------------------------------------------")
     print("    koe")
     print("    " + ver)
-    print("  by GokaGokai/ JohnTitorTitor/ Kanon")
+    print("  by GokaGokai")
     print("------------------------------------------------")
     print("\nAfter selecting voices and speed rates, leave it in the background\n")
-
     printSelectVoices()
     printSelectRate()
-    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    save_config(enIndex, frIndex, jpIndex, enRate, frRate, jpRate)
+    printMenu()
 
+def printMenu():
+    print("\n" * 30)
     print("------------------------------------------------")
     print("    koe")
     print("    " + ver)
-    print("  by GokaGokai/ JohnTitorTitor/ Kanon")
+    print("  by GokaGokai")
     print("------------------------------------------------")
     print("\nLeave it in the background\n")
     print("Speak:               ctrl+c")
     print("SelectForceLang:     ctrl+shift+alt+x")
     print("ToggleListen:        ctrl+shift+x")
     print("TogglePause:         ctrl+alt")
-    print("")
+    print("ChangeVoicesSpeeds:  ctrl+alt+p")
+    print("\n")
     print("---Status---")
 
-printMenu()
+# ------
+# Main
+# ------
+printPrompt()
 toggleListen()
-keyboard.wait()
+
+try:
+    while True:
+        task = task_queue.get()
+        if task == "action":
+            action()
+        elif task == "selectForceLang":
+            selectForceLang()
+        elif task == "toggleListen":
+            toggleListen()
+        elif task == "togglePause":
+            togglePause()
+        elif task == "changeVoicesSpeeds":
+            changeVoicesSpeeds()
+
+except KeyboardInterrupt:
+    print("\nExiting the program...")
