@@ -16,8 +16,7 @@ Currently supports English, French, and Japanese.
 - Can change the voices and speed rates for each language.  
 - Can force the text-to-speech to always use a specific language.   
  
-##  
-
+   
 ##### Keyboard Shortcuts
 
 - Speak: `ctrl+c`
