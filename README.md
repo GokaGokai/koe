@@ -4,46 +4,49 @@
 
 <br>
 
-Koe is a text-to-speech that listens and reads your clipboard every time you press *ctrl+c* (Togglable)   
-Currently for English, French, and Japanese.    
+Koe is an easy and convenient text-to-speech application that listens and reads your clipboard in the background.   
 
-You can choose to autodetect the language from the clipboard,  
-it will speak the corresponding language.
-
-You can also force it to always speak one language.    
-For example, if you select to force Japanese, it will always speak and translate to you in Japanese even if you copy an English or French text or other.  
+Currently supports English, French, and Japanese.  
   
+#####Features:
+- Listens and reads directly when pressing *ctrl+c*.  
+- Interrupt with *ctrl+alt*
+- Toggle between listening and ignoring with *ctrl+shift+x*.  
+- Automatically detects the language of the copied text.  
+- Can change the voices and speed rates for each language.  
+- Can force the text-to-speech to always use a specific language.   
+ 
 ##  
 
-#### Shortcut  
-Speak:               *ctrl+c*  
-SelectForceLang:     *ctrl+shift+alt+x*  
-ToggleListen:        *ctrl+shift+x*  
-TogglePause:         *ctrl+alt*  
-  
+##### Keyboard Shortcuts
+
+- Speak: `ctrl+c`
+- SelectForceLang: `ctrl+shift+alt+x`
+- ToggleListen: `ctrl+shift+x`
+- TogglePause: `ctrl+alt`
+- ChangeVoicesSpeeds: `ctrl+alt+p`
+
 <br>
 
 ### Usage 
 1- Download *koe.exe* from the <a href="https://github.com/GokaGokai/koe/releases">latest release</a>  
 2- Open *koe.exe*  
-3- Select the matching language voices that are available from your system 
+3- Select the matching language voices that are available from your system  
+(You download them with your PC Settings, Language)
 ```
-pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
-Hello from the pygame community. https://www.pygame.org/contribute.html
-
 ------------------------------------------------
     koe
-    v5
-  by GokaGokai/ JohnTitorTitor/ Kanon
+    v6.1
+  by GokaGokai
 ------------------------------------------------
 
 After selecting voices and speed rates, leave it in the background
 
 ------
-0 - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_DAVID_11.0
-1 - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0
-2 - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_FR-FR_HORTENSE_11.0
-3 - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_JA-JP_HARUKA_11.0
+0 - TTS_MS_EN-US_DAVID_11.0
+1 - TTS_MS_EN-US_ZIRA_11.0
+2 - TTS_MS_FR-FR_HORTENSE_11.0
+3 - TTS_MS_JA-JP_HARUKA_11.0
 
 If you don't see the language, just type 0 for now
 What to choose for EN? [0-3] 1
@@ -63,8 +66,8 @@ Speed Rate for JP? [1-500] 200
 ```
 ------------------------------------------------
     koe
-    v5
-  by GokaGokai/ JohnTitorTitor/ Kanon
+    v6.1
+  by GokaGokai
 ------------------------------------------------
 
 Leave it in the background
@@ -73,10 +76,15 @@ Speak:               ctrl+c
 SelectForceLang:     ctrl+shift+alt+x
 ToggleListen:        ctrl+shift+x
 TogglePause:         ctrl+alt
+ChangeVoicesSpeeds:  ctrl+alt+p
+
 
 ---Status---
-Listening
+Listening 
 ```
+
+6- Try highlighting any text and pressing *ctrl+c*.  
+
 <br>   
 Done!  
 
