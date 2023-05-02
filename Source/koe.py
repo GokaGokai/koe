@@ -1,5 +1,5 @@
 # Author: GokaGokai (@GokaGokai on GitHub)
-# Date: 4/7/2023
+# Date: 5/2/2023
 # Description: Text-to-speech listener (Windows) v6.1
 import json
 import os
@@ -13,8 +13,8 @@ from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from translate import Translator
 os.system('start cmd /c mode con: cols=56 lines=18 && mode con: cols=56 lines=18 && title 声')
-langs = ["","en", "fr", "ja"]   # "" is autodetect
-ver = "v6.1"
+langs = ["", "en", "fr", "ja", "de"]   # "" is autodetect
+ver = "v6.2"
 
 
 # ------------------
@@ -58,6 +58,9 @@ def voiceSetup():
         elif detectedLang == "fr":
             engine.setProperty('voice', voices[frIndex].id)
             engine.setProperty('rate', frRate)
+        elif detectedLang == "de":
+            engine.setProperty('voice', voices[deIndex].id)
+            engine.setProperty('rate', deRate)
         else:
             engine.setProperty('voice', voices[enIndex].id)
             engine.setProperty('rate', enRate)
@@ -71,6 +74,9 @@ def voiceSetup():
     elif langs[selectedLang] == "ja":
         engine.setProperty('voice', voices[jpIndex].id)
         engine.setProperty('rate', jpRate)
+    elif langs[selectedLang] == "de":
+        engine.setProperty('voice', voices[deIndex].id)
+        engine.setProperty('rate', deRate)
     
 def translate(text):
     try:
@@ -80,6 +86,8 @@ def translate(text):
             translator = Translator(langs[selectedLang], from_lang="fr")
         elif detectedLang == "en":
             translator = Translator(langs[selectedLang], from_lang="en")
+        elif detectedLang == "de":
+            translator = Translator(langs[selectedLang], from_lang="de")
         else:
             translator = Translator(langs[selectedLang])
 
@@ -159,6 +167,8 @@ def selectForceLang():
         speak("Francais")
     elif langs[selectedLang] == "ja":
         speak("にほんご")
+    elif langs[selectedLang] == "de":
+        speak("Deutsch")
 
     print(f"{'Listening ' + additional + langs[selectedLang]:<{os.get_terminal_size().columns}}", end="\r")
 
@@ -211,15 +221,17 @@ def get_config_path():
     config_path = os.path.join(config_folder, "config.json")
     return config_path
 
-def save_config(enIndex, frIndex, jpIndex, enRate, frRate, jpRate):
+def save_config(enIndex, frIndex, jpIndex, deIndex, enRate, frRate, jpRate, deRate):
     config_path = get_config_path()
     config = {
         "enIndex": enIndex,
         "frIndex": frIndex,
         "jpIndex": jpIndex,
+        "deIndex": deIndex,
         "enRate": enRate,
         "frRate": frRate,
-        "jpRate": jpRate
+        "jpRate": jpRate,
+        "deRate": deRate
     }
     with open(config_path, "w") as f:
         json.dump(config, f)
@@ -238,7 +250,7 @@ def load_config():
         with open(config_path, "r") as f:
             config = json.load(f)
     else:
-        config = {"EN": None, "FR": None, "JP": None, "EN_rate": None, "FR_rate": None, "JP_rate": None}
+        config = {"EN": None, "FR": None, "JP": None, "DE": None, "EN_rate": None, "FR_rate": None, "JP_rate": None, "DE_rate": None}
     return config
     
 def selectVoicesSpeeds():
@@ -253,7 +265,7 @@ def selectVoicesSpeeds():
     reset_config()
     printSelectVoices()
     printSelectRate()
-    save_config(enIndex, frIndex, jpIndex, enRate, frRate, jpRate)
+    save_config(enIndex, frIndex, jpIndex, deIndex, enRate, frRate, jpRate, deRate)
 
     if langs[selectedLang] == "":
         additional = ""
@@ -270,16 +282,17 @@ def selectVoicesSpeeds():
         speak("Listening")
         print(f"{'Listening ' + additional + langs[selectedLang]:<{os.get_terminal_size().columns}}", end="\r")
 
-
 # ------
 # Prints
 # ------
 enIndex = 0
 frIndex = 0
 jpIndex = 0
+deIndex = 0
 enRate = 100
 frRate = 100
 jpRate = 100
+deRate = 100
 
 def get_integer_input(prompt, min_value, max_value):
     while True:
@@ -296,12 +309,14 @@ def printSelectVoices():
     global enIndex
     global frIndex
     global jpIndex
+    global deIndex
 
     config = load_config()
-    if config is not None and "enIndex" in config and "frIndex" in config and "jpIndex" in config:
+    if config is not None and "enIndex" in config and "frIndex" in config and "jpIndex" in config and "deIndex" in config:
         enIndex = config["enIndex"]
         frIndex = config["frIndex"]
         jpIndex = config["jpIndex"]
+        deIndex = config["deIndex"]
         print("Using voice indices from config file.")
     else:
         voices = engine.getProperty('voices')
@@ -318,18 +333,21 @@ def printSelectVoices():
         enIndex = get_integer_input("What to choose for EN? [0-" + str(i-1) + "] ", 0, i-1)
         frIndex = get_integer_input("What to choose for FR? [0-" + str(i-1) + "] ", 0, i-1)
         jpIndex = get_integer_input("What to choose for JP? [0-" + str(i-1) + "] ", 0, i-1)
+        deIndex = get_integer_input("What to choose for DE? [0-" + str(i-1) + "] ", 0, i-1)
         print("\nGotcha!\n\n")
 
 def printSelectRate():
     global enRate
     global frRate
     global jpRate
+    global deRate
 
     config = load_config()
-    if config is not None and "enRate" in config and "frRate" in config and "jpRate" in config:
+    if config is not None and "enRate" in config and "frRate" in config and "jpRate" in config and "deRate" in config:
         enRate = config["enRate"]
         frRate = config["frRate"]
         jpRate = config["jpRate"]
+        deRate = config["deRate"]
         print("Using speed rates from config file.")
     else:
         print("------")
@@ -337,6 +355,7 @@ def printSelectRate():
         enRate = get_integer_input("Speed Rate for EN? [1-500] ", 1, 500)
         frRate = get_integer_input("Speed Rate for FR? [1-500] ", 1, 500)
         jpRate = get_integer_input("Speed Rate for JP? [1-500] ", 1, 500)
+        deRate = get_integer_input("Speed Rate for DE? [1-500] ", 1, 500)
         
         print("\nGotcha!\n\n")
 
@@ -350,7 +369,7 @@ def printPrompt():
     print("\nAfter selecting voices and speed rates, leave it in the background\n")
     printSelectVoices()
     printSelectRate()
-    save_config(enIndex, frIndex, jpIndex, enRate, frRate, jpRate)
+    save_config(enIndex, frIndex, jpIndex, deIndex, enRate, frRate, jpRate, deRate)
     printMenu()
 
 def printMenu():
